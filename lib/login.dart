@@ -13,23 +13,38 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
+  /// DATA USER LOKAL
+  final Map<String, String> localUsers = {
+    'admin@gmail.com': '123456',
+    'user@gmail.com': 'password',
+  };
+
   Future<void> _login() async {
-    if (emailController.text.isEmpty ||
-        passwordController.text.isEmpty) {
+    final email = emailController.text.trim();
+    final password = passwordController.text.trim();
+
+    /// VALIDASI INPUT KOSONG
+    if (email.isEmpty || password.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Email & Password wajib diisi")),
       );
       return;
     }
 
+    /// VALIDASI EMAIL & PASSWORD
+    if (!localUsers.containsKey(email) ||
+        localUsers[email] != password) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Email atau Password salah")),
+      );
+      return;
+    }
+
     /// SIMPAN USER AKTIF
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(
-      'active_user',
-      emailController.text.trim(),
-    );
+    await prefs.setString('active_user', email);
 
-    /// PINDAH KE NAVBAR
+    /// PINDAH KE MAIN NAVBAR
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(

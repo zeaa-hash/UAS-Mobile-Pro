@@ -20,11 +20,9 @@ class _Halaman_UtamaState extends State<Halaman_Utama> {
   String? _selectedProdi;
   String _jenisKelamin = 'Pria';
 
-  // Ini variabel tempat menyimpan data entri-form yang sedang ditampilkan di layar (ListView).
   List<Map<String, dynamic>> _items = [];
   static const String _prefsKey = 'submissions';
 
-  // Jika sedang mengedit, simpan index item yang diedit. null = tidak sedang edit.
   int? _editingIndex;
 
   @override
@@ -33,7 +31,6 @@ class _Halaman_UtamaState extends State<Halaman_Utama> {
     _loadSaved();
   }
 
-  // membersihkan (release) resource yang tidak otomatis dibuang oleh Dart/Flutter agar tidak terjadi memory leak.
   @override
   void dispose() {
     _namaController.dispose();
@@ -42,7 +39,6 @@ class _Halaman_UtamaState extends State<Halaman_Utama> {
     super.dispose();
   }
 
-  // memuat (read) data yang sebelumnya disimpan supaya ListView di UI bisa menampilkan data itu.
   Future<void> _loadSaved() async {
     final prefs = await SharedPreferences.getInstance();
     final List<String>? raw = prefs.getStringList(_prefsKey);
@@ -53,14 +49,12 @@ class _Halaman_UtamaState extends State<Halaman_Utama> {
     }
   }
 
-  // bertugas menyimpan semua entri _items ke penyimpanan lokal (SharedPreferences)
   Future<void> _saveAll() async {
     final prefs = await SharedPreferences.getInstance();
     final List<String> raw = _items.map((m) => jsonEncode(m)).toList();
     await prefs.setStringList(_prefsKey, raw);
   }
 
-  // Memasukkan item baru atau memperbarui item jika sedang dalam mode edit.
   void _addOrUpdateItem() {
     final nama = _namaController.text.trim();
     final alamat = _alamatController.text.trim();
@@ -82,7 +76,6 @@ class _Halaman_UtamaState extends State<Halaman_Utama> {
         'kelas': _selectedKelas ?? '-',
         'prodi': _selectedProdi ?? '-',
         'jk': _jenisKelamin,
-        // createdAt digunakan sebagai key unik untuk Dismissible
         'createdAt': DateTime.now().toIso8601String(),
       };
 
@@ -96,7 +89,6 @@ class _Halaman_UtamaState extends State<Halaman_Utama> {
         const SnackBar(content: Text('Data berhasil ditambahkan')),
       );
     } else {
-      // Update item yang sedang diedit
       final index = _editingIndex!;
       final oldCreatedAt = _items[index]['createdAt'] as String?;
 
@@ -107,7 +99,6 @@ class _Halaman_UtamaState extends State<Halaman_Utama> {
         'kelas': _selectedKelas ?? '-',
         'prodi': _selectedProdi ?? '-',
         'jk': _jenisKelamin,
-        // pertahankan createdAt lama agar key Dismissible tetap unik dan stabil
         'createdAt': oldCreatedAt ?? DateTime.now().toIso8601String(),
         'updatedAt': DateTime.now().toIso8601String(),
       };
@@ -124,7 +115,6 @@ class _Halaman_UtamaState extends State<Halaman_Utama> {
       );
     }
 
-    // Clear form setelah tambah/update
     _clearForm();
   }
 
@@ -138,7 +128,6 @@ class _Halaman_UtamaState extends State<Halaman_Utama> {
     );
   }
 
-  // Memulai edit: isi form dengan data item yang dipilih dan simpan indexnya.
   void _startEdit(int index) {
     final item = _items[index];
     setState(() {
@@ -153,7 +142,6 @@ class _Halaman_UtamaState extends State<Halaman_Utama> {
       _jenisKelamin = (item['jk'] as String?) ?? 'Pria';
     });
 
-    // Scroll to top jika diperlukan: opsi UX, tetapi di sini cukup menampilkan SnackBar penjelas.
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
           content: Text('Mode edit: perbarui form lalu tekan Update')),
@@ -192,7 +180,7 @@ class _Halaman_UtamaState extends State<Halaman_Utama> {
               TextButton(
                 onPressed: () {
                   Navigator.of(context).pop();
-                  _startEdit(index); // langsung masuk ke mode edit
+                  _startEdit(index);
                 },
                 child: const Text('Edit'),
               ),

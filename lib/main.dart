@@ -28,9 +28,6 @@ class MyApp extends StatelessWidget {
   }
 }
 
-/* =========================
-   FLOATING NAVBAR
-========================= */
 class MainNavbar extends StatelessWidget {
   const MainNavbar({super.key});
 
